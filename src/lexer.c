@@ -106,3 +106,28 @@ Token *lex_file(const char *filename, int *out_count) {
 
             ungetc(next, fp);
         }
+          if (isalpha(c) || c == '_' || c == '$') {
+            char buf[256];
+            int len = 0;
+
+            buf[len++] = c;
+
+            int p;
+            while ((p = fgetc(fp)) != EOF &&
+                   (isalnum(p) || p == '_' || p == '$')) {
+                if (len < 255)
+                    buf[len++] = p;
+                col++;
+            }
+            buf[len] = '\0';
+            if (p != EOF) ungetc(p, fp);
+
+            Token t;
+            t.type = is_keyword(buf) ? TOK_KEYWORD : TOK_IDENTIFIER;
+            t.lexeme = strdup(buf);
+            t.line = line;
+            t.column = col - len + 1;
+
+            push_token(&tokens, t);
+            continue;
+        }
