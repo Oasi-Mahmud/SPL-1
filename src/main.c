@@ -74,3 +74,40 @@ void analyze(Token *t, int n) {
         }
     }
 
+     printf("\nDetected Variables:\n");
+
+    for (int i =0; i <n - 1; i++) {
+
+        if (t[i].type ==TOK_SYMBOL) {
+            if (strcmp(t[i].lexeme,"{")==0)
+                 braceDepth++;
+            if (strcmp(t[i].lexeme,"}")==0) {
+                braceDepth--;
+                if (braceDepth < 2) insideMethod = 0;
+            }
+        }
+
+        if (t[i].type== TOK_KEYWORD && is_type_keyword(t[i].lexeme) &&
+            t[i+1].type ==TOK_IDENTIFIER) {
+
+            if (braceDepth >= 2) {
+                printf(" Local Variable: %s (line %d)\n",
+                       t[i+1].lexeme, t[i].line);
+                      localVar++;
+            } else {
+                printf("  Global Variable: %s (line %d)\n",
+                       t[i+1].lexeme, t[i].line);
+                globalVar++;
+            }
+        }
+    }
+
+    int lastLine= -1;                 
+    for (int i = 0; i <n; i++) {
+        if (t[i].line !=lastLine &&
+            t[i].type !=TOK_EOF) {
+            LOC++;
+            lastLine = t[i].line;
+        }
+    }
+
