@@ -111,3 +111,27 @@ void analyze(Token *t, int n) {
         }
     }
 
+ printf("\nSummary  :\n");
+    printf("  Total Classes        : %d \n", classCount);
+    printf(" Total Methods        : %d \n", methodCount);
+    printf("  for-loops            : %d\n", forCount);
+    printf(" while-loops          : %d\n", whileCount);
+    printf("  do-while-loops      : %d\n", doCount);
+    printf("  Global Variables    : %d\n", globalVar);
+    printf("  Local Variables    : %d\n", localVar);
+    printf("  Lines of Code (LOC)   : %d\n", LOC);
+}
+
+int main(int argc, char **argv) {
+    if (argc < 2) {
+        printf("Usage: %s <java_file>\n", argv[0]);
+        return 1;
+    }
+
+    int count = 0;
+    Token *tokens = lex_file(argv[1], &count);
+    if (!tokens) {
+        fprintf(stderr, "Tokenization failed\n");
+        return 1;
+    }
+
