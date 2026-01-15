@@ -135,3 +135,7 @@ int main(int argc, char **argv) {
         return 1;
     }
 
+    analyze(tokens, count);
+    free_tokens(tokens, count);
+    return 0;
+}
