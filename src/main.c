@@ -9,6 +9,25 @@ static int is_type_keyword(const char *s) {
            strcmp(s,"short")==0;
 }
 
+const char* infer_method_purpose(const char *name) {
+
+    if (strncmp(name,"get",3)==0)
+        return "Returns the value of a variable";
+
+    if (strncmp(name,"set",3)==0)
+        return "Sets or updates the value of a variable";
+
+    if (strncmp(name,"is",2)==0)
+        return "Checks a condition and returns boolean result";
+
+    if (strstr(name,"area") || strstr(name,"Area"))
+        return "Calculates area of a geometric shape";
+
+
+
+    return "Performs a programmer-defined operation";
+}
+
 void analyze(Token *t, int n) {
 
     int classCount = 0, methodCount = 0;
