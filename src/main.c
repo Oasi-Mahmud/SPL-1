@@ -23,6 +23,11 @@ const char* infer_method_purpose(const char *name) {
     if (strstr(name,"area") || strstr(name,"Area"))
         return "Calculates area of a geometric shape";
 
+     if (strstr(name,"distance") || strstr(name,"Distance"))
+        return "Calculates distance between objects or points";
+
+    if (strcmp(name,"toString")==0)
+        return "Returns string representation of the object";
 
 
     return "Performs a programmer-defined operation";
