@@ -99,3 +99,53 @@ void method_name_summary(const char *methodName, char *out, size_t outSize) {
         else snprintf(out, outSize, "Checks existence and returns boolean result");
         return;
     }
+
+  if (starts_with(norm, "can") || starts_with(norm, "should")) {
+        snprintf(out, outSize, "Checks capability/condition and returns boolean result");
+        return;
+    }
+
+    if (starts_with(norm, "get")) {
+        char obj[256];
+        extract_object_phrase(methodName, 3, obj, sizeof(obj));
+        if (obj[0]) snprintf(out, outSize, "Returns the value of %s", obj);
+        else snprintf(out, outSize, "Returns the value of a variable");
+        return;
+    }
+    if (starts_with(norm, "set") || starts_with(norm, "update") || starts_with(norm, "modify") || starts_with(norm, "change")) {
+        int pre = starts_with(norm, "set") ? 3 :
+                  starts_with(norm, "update") ? 6 :
+                  starts_with(norm, "modify") ? 6 : 6;
+
+        char obj[256];
+        extract_object_phrase(methodName, pre, obj, sizeof(obj));
+        if (obj[0]) snprintf(out, outSize, "Sets/updates the value of %s", obj);
+        else snprintf(out, outSize, "Sets or updates the value of a variable");
+        return;
+    }
+
+    if (starts_with(norm, "create") || starts_with(norm, "build") || starts_with(norm, "make") || starts_with(norm, "init")) {
+        snprintf(out, outSize, "Creates/initializes an object or resource");
+        return;
+    }
+
+    if (starts_with(norm, "read") || starts_with(norm, "load") || starts_with(norm, "fetch")) {
+        snprintf(out, outSize, "Reads or loads data");
+        return;
+    }
+
+    if (starts_with(norm, "write") || starts_with(norm, "save") || starts_with(norm, "store")) {
+        snprintf(out, outSize, "Writes or saves data");
+        return;
+    }
+
+    if (starts_with(norm, "print") || starts_with(norm, "show") || starts_with(norm, "display") || starts_with(norm, "log")) {
+        snprintf(out, outSize, "Displays or logs output");
+        return;
+    }
+
+    if (starts_with(norm, "calc") || starts_with(norm, "calculate") || starts_with(norm, "compute") || starts_with(norm, "count")) {
+        snprintf(out, outSize, "Performs a calculation or computes a result");
+        return;
+    }
+
