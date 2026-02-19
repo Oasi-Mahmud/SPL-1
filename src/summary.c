@@ -148,4 +148,20 @@ void method_name_summary(const char *methodName, char *out, size_t outSize) {
         snprintf(out, outSize, "Performs a calculation or computes a result");
         return;
     }
+    if (starts_with(norm, "find") || starts_with(norm, "search") || starts_with(norm, "lookup")) {
+        snprintf(out, outSize, "Finds or searches for a result");
+        return;
+    }
+    if (starts_with(norm, "sort")) {
+        snprintf(out, outSize, "Sorts a collection of items");
+        return;
+    }
 
+    if (strstr(norm, "area")) {
+        snprintf(out, outSize, "Calculates area of a geometric shape");
+        return;
+    }
+    if (strstr(norm, "distance")) {
+        snprintf(out, outSize, "Calculates distance between objects or points");
+        return;
+    }
