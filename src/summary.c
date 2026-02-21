@@ -165,3 +165,62 @@ void method_name_summary(const char *methodName, char *out, size_t outSize) {
         snprintf(out, outSize, "Calculates distance between objects or points");
         return;
     }
+  if (strstr(norm, "max")) {
+        snprintf(out, outSize, "Finds the maximum value");
+        return;
+    }
+    if (strstr(norm, "min")) {
+        snprintf(out, outSize, "Finds the minimum value");
+        return;
+    }
+    if (strstr(norm, "avg") || strstr(norm, "average") || strstr(norm, "mean")) {
+        snprintf(out, outSize, "Computes an average/mean value");
+        return;
+    }
+
+    snprintf(out, outSize, "Performs a programmer-defined operation");
+}
+
+
+void class_name_summary(const char *className, char *out, size_t outSize) {
+    if (!className || !out || outSize == 0) return;
+
+    char norm[256];
+    normalize_name(className, norm, sizeof(norm));
+
+    if (strstr(norm, "controller")) {
+        snprintf(out, outSize, "Acts as a controller to handle application flow");
+        return;
+    }
+    if (strstr(norm, "service")) {
+        snprintf(out, outSize, "Provides service-layer logic or operations");
+        return;
+    }
+    if (strstr(norm, "manager")) {
+        snprintf(out, outSize, "Manages and coordinates related operations/resources");
+        return;
+    }
+    if (strstr(norm, "repository") || strstr(norm, "repo") || strstr(norm, "dao")) {
+        snprintf(out, outSize, "Handles data access or database operations");
+        return;
+    }
+    if (strstr(norm, "util") || strstr(norm, "helper")) {
+        snprintf(out, outSize, "Contains utility/helper functions");
+        return;
+    }
+    if (strstr(norm, "model") || strstr(norm, "entity") || strstr(norm, "dto")) {
+        snprintf(out, outSize, "Represents a data model/entity object");
+        return;
+    }
+    if (strstr(norm, "test")) {
+        snprintf(out, outSize, "Represents a test-related class");
+        return;
+    }
+    if (strstr(norm, "point")) {
+        snprintf(out, outSize, "Represents a point or coordinate-related object");
+        return;
+    }
+    if (strstr(norm, "student")) {
+        snprintf(out, outSize, "Represents or manages student-related data");
+        return;
+    }
