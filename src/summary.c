@@ -224,3 +224,6 @@ void class_name_summary(const char *className, char *out, size_t outSize) {
         snprintf(out, outSize, "Represents or manages student-related data");
         return;
     }
+
+    snprintf(out, outSize, "Represents a custom class with related properties and behaviors");
+}
