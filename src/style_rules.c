@@ -45,3 +45,66 @@ static int looks_like_constant(const char *s) {
     }
     return hasAlpha;
 }
+static int is_control_keyword(const char *s) {
+    return strcmp(s,"if")==0 || strcmp(s,"for")==0 ||
+           strcmp(s,"while")==0 || strcmp(s,"do")==0;
+}
+
+static int skip_parens(Token *t, int n, int i) {
+    if (i >= n) return i;
+    if (!(t[i].type == TOK_SYMBOL && strcmp(t[i].lexeme, "(") == 0)) return i;
+
+    int depth = 0;
+    for (; i < n; i++) {
+        if (t[i].type == TOK_SYMBOL && strcmp(t[i].lexeme, "(") == 0) depth++;
+        else if (t[i].type == TOK_SYMBOL && strcmp(t[i].lexeme, ")") == 0) {
+            depth--;
+            if (depth == 0) return i + 1;
+        }
+    }
+    return n - 1;
+}
+
+
+void run_style_checks(Token *t, int n) {
+    if (!t || n <= 0) return;
+
+    printf("\nStyle Checks (Rule-based):\n");
+    int warningCount = 0;
+
+    for (int i = 0; i < n - 1; i++) {
+        if (t[i].type == TOK_KEYWORD &&
+            strcmp(t[i].lexeme, "class") == 0 &&
+            t[i+1].type == TOK_IDENTIFIER) {
+
+            const char *cls = t[i+1].lexeme;
+            if (!is_pascal_case(cls)) {
+                printf("  [STYLE] Class name should be PascalCase: '%s' (line %d)\n",
+                       cls, t[i].line);
+                warningCount++;
+            }
+        }
+    }
+
+    for (int i = 0; i < n - 2; i++) {
+        int isReturnType =
+            (t[i].type == TOK_KEYWORD && is_type_keyword_local(t[i].lexeme)) ||
+            (t[i].type == TOK_KEYWORD && strcmp(t[i].lexeme, "void") == 0);
+
+        if (isReturnType &&
+            t[i+1].type == TOK_IDENTIFIER &&
+            strcmp(t[i+2].lexeme, "(") == 0) {
+
+            const char *m = t[i+1].lexeme;
+
+            if (isupper((unsigned char)m[0])) {
+                continue;
+            }
+
+            if (!is_camel_case(m)) {
+                printf("  [STYLE] Method name should be camelCase: '%s' (line %d)\n",
+                       m, t[i].line);
+                warningCount++;
+            }
+        }
+    }
