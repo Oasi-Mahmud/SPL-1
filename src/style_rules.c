@@ -108,3 +108,39 @@ void run_style_checks(Token *t, int n) {
             }
         }
     }
+for (int i = 0; i < n - 1; i++) {
+        if (t[i].type == TOK_KEYWORD && is_type_keyword_local(t[i].lexeme) &&
+            t[i+1].type == TOK_IDENTIFIER) {
+
+            const char *v = t[i+1].lexeme;
+
+            if (looks_like_constant(v)) continue;
+
+            if (!is_camel_case(v)) {
+                printf("  [STYLE] Variable name should be camelCase: '%s' (line %d)\n",
+                       v, t[i].line);
+                warningCount++;
+            }
+        }
+    }
+
+    for (int i = 0; i < n - 1; i++) {
+        if (t[i].type == TOK_KEYWORD && is_control_keyword(t[i].lexeme)) {
+
+            int j = i + 1;
+
+            if (strcmp(t[i].lexeme, "do") != 0) {
+                while (j < n && !(t[j].type == TOK_SYMBOL && strcmp(t[j].lexeme, "(") == 0)) j++;
+                if (j >= n) continue;
+
+                j = skip_parens(t, n, j); 
+                if (j >= n) continue;
+            }
+
+            if (!(t[j].type == TOK_SYMBOL && strcmp(t[j].lexeme, "{") == 0)) {
+                printf("  [STYLE] Use braces with '%s' statement (line %d)\n",
+                       t[i].lexeme, t[i].line);
+                warningCount++;
+            }
+        }
+    }
