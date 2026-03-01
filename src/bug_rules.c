@@ -123,4 +123,23 @@ for (int i = 0; i < n - 1; i++) {
 
     int braceDepth = 0;
 
+    for (int i = 0; i < n - 1; i++) {
+        if (t[i].type == TOK_SYMBOL) {
+            if (is_symbol(t, i, "{")) braceDepth++;
+            else if (is_symbol(t, i, "}")) braceDepth--;
+        }
+
+        if (braceDepth >= 2 &&
+            t[i].type == TOK_KEYWORD && is_type_keyword_local(t[i].lexeme) &&
+            t[i + 1].type == TOK_IDENTIFIER) {
+
+            if (localCount < 200) {
+                strncpy(localNames[localCount], t[i + 1].lexeme, 63);
+                localNames[localCount][63] = '\0';
+                localLine[localCount] = t[i].line;
+                localCount++;
+            }
+        }
+    }
+
   
