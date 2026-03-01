@@ -101,3 +101,26 @@ void run_bug_checks(Token *t, int n) {
             }
         }
     }
+for (int i = 0; i < n - 1; i++) {
+        if (is_symbol(t, i, "/")) {
+            if (t[i + 1].type == TOK_NUMBER && strcmp(t[i + 1].lexeme, "0") == 0) {
+                printf("  [BUG-3] Possible division by zero (line %d)\n", t[i].line);
+                warn++;
+            }
+            if (i + 3 < n &&
+                is_symbol(t, i + 1, "(") &&
+                t[i + 2].type == TOK_NUMBER && strcmp(t[i + 2].lexeme, "0") == 0 &&
+                is_symbol(t, i + 3, ")")) {
+                printf("  [BUG-3] Possible division by zero (line %d)\n", t[i].line);
+                warn++;
+            }
+        }
+    }
+
+    char localNames[200][64];
+    int localLine[200];
+    int localCount = 0;
+
+    int braceDepth = 0;
+
+  
