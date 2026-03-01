@@ -144,3 +144,15 @@ for (int i = 0; i < n - 1; i++) {
             }
         }
     }
+
+ for (int i = 1; i < n; i++) {
+        if (t[i].type == TOK_KEYWORD && strcmp(t[i].lexeme, "else") == 0) {
+         
+            if (!(t[i-1].type == TOK_SYMBOL && strcmp(t[i-1].lexeme, "}") == 0)) {
+                printf("  [STYLE] 'else' should be aligned with previous block (prefer '} else {') (line %d)\n",
+                       t[i].line);
+                warningCount++;
+            }
+        }
+    }
+
