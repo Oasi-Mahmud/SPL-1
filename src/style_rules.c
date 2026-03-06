@@ -156,3 +156,23 @@ for (int i = 0; i < n - 1; i++) {
         }
     }
 
+ for (int i = 0; i < n; i++) {
+        if (t[i].type == TOK_KEYWORD && strcmp(t[i].lexeme, "case") == 0) {
+
+            int j = i;
+            int hasBreak = 0;
+
+            for (; j < n; j++) {
+                if (j != i && t[j].type == TOK_KEYWORD &&
+                    (strcmp(t[j].lexeme, "case") == 0 || strcmp(t[j].lexeme, "default") == 0)) {
+                    break;
+                }
+
+                if (t[j].type == TOK_KEYWORD && strcmp(t[j].lexeme, "break") == 0) {
+                    hasBreak = 1;
+                }
+
+                if (t[j].type == TOK_SYMBOL && strcmp(t[j].lexeme, "}") == 0) {
+                    break;
+                }
+            }
