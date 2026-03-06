@@ -22,7 +22,8 @@ static int is_control_kw(const char *s) {
     return strcmp(s,"if")==0 || strcmp(s,"for")==0 || strcmp(s,"while")==0;
 }
 static int skip_parens(Token *t, int n, int i) {
-    if (i >= n) return i;
+    if (i >= n)
+        return i;
     if (!is_symbol(t, i, "(")) return i;
 
     int depth = 0;
@@ -155,4 +156,17 @@ for (int i = 0; i < n - 1; i++) {
         }
     }
 
+  for (int i = 0; i < n - 4; i++) {
+        if (is_keyword(t, i, "catch")) {
+            int j = find_next_lparen(t, n, i + 1);
+            if (j >= n)
+             continue;
+
+            j = skip_parens(t, n, j);
+            if (j + 1 < n && is_symbol(t, j, "{") && is_symbol(t, j + 1, "}")) {
+                printf("  [BUG-5] Empty catch block (line %d)\n", t[i].line);
+                warn++;
+            }
+        }
+    }
   
