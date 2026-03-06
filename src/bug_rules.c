@@ -24,14 +24,17 @@ static int is_control_kw(const char *s) {
 static int skip_parens(Token *t, int n, int i) {
     if (i >= n)
         return i;
-    if (!is_symbol(t, i, "(")) return i;
+    if (!is_symbol(t, i, "("))
+        return i;
 
     int depth = 0;
     for (; i < n; i++) {
-        if (is_symbol(t, i, "(")) depth++;
+        if (is_symbol(t, i, "(")) 
+            depth++;
         else if (is_symbol(t, i, ")")) {
             depth--;
-            if (depth == 0) return i + 1;
+            if (depth == 0) 
+                return i + 1;
         }
     }
     return n;
@@ -39,12 +42,14 @@ static int skip_parens(Token *t, int n, int i) {
 
 static int find_next_lparen(Token *t, int n, int i) {
     int j = i;
-    while (j < n && !(t[j].type == TOK_SYMBOL && strcmp(t[j].lexeme, "(") == 0)) j++;
+    while (j < n && !(t[j].type == TOK_SYMBOL && strcmp(t[j].lexeme, "(") == 0))
+        j++;
     return j;
 }
 
 void run_bug_checks(Token *t, int n) {
-    if (!t || n <= 0) return;
+    if (!t || n <= 0)
+        return;
 
     printf("\nBug Pattern Checks (Rule-based):\n");
     int warn = 0;
@@ -126,8 +131,10 @@ for (int i = 0; i < n - 1; i++) {
 
     for (int i = 0; i < n - 1; i++) {
         if (t[i].type == TOK_SYMBOL) {
-            if (is_symbol(t, i, "{")) braceDepth++;
-            else if (is_symbol(t, i, "}")) braceDepth--;
+            if (is_symbol(t, i, "{"))
+                braceDepth++;
+            else if (is_symbol(t, i, "}"))
+                braceDepth--;
         }
 
         if (braceDepth >= 2 &&
