@@ -142,4 +142,17 @@ for (int i = 0; i < n - 1; i++) {
         }
     }
 
+ for (int k = 0; k < localCount; k++) {
+        int occ = 0;
+        for (int i = 0; i < n; i++) {
+            if (t[i].type == TOK_IDENTIFIER && strcmp(t[i].lexeme, localNames[k]) == 0)
+                occ++;
+        }
+        if (occ <= 1) {
+            printf("  [BUG-4] Unused local variable '%s' (declared line %d)\n",
+                   localNames[k], localLine[k]);
+            warn++;
+        }
+    }
+
   
