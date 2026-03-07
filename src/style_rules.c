@@ -176,3 +176,11 @@ for (int i = 0; i < n - 1; i++) {
                     break;
                 }
             }
+
+       if (!hasBreak) {
+                printf("  [STYLE] case may need 'break' to avoid fall-through (line %d)\n",
+                       t[i].line);
+                warningCount++;
+            }
+        }
+    }
