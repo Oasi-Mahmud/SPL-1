@@ -176,4 +176,22 @@ for (int i = 0; i < n - 1; i++) {
             }
         }
     }
-  
+
+ for (int i = 0; i < n - 1; i++) {
+        if (is_keyword(t, i, "while")) {
+            int j = find_next_lparen(t, n, i + 1);
+            if (j >= n) 
+            continue;
+
+            int end = skip_parens(t, n, j);
+            if (end > n) 
+            end = n;
+
+            for (int k = j; k < end; k++) {
+                if (t[k].type == TOK_IDENTIFIER && strcmp(t[k].lexeme, "true") == 0) {
+                    printf("  [BUG-6] Possible infinite loop: while(true) (line %d)\n", t[i].line);
+                    warn++;
+                    break;
+                }
+            }
+        }
