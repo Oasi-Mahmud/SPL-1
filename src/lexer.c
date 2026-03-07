@@ -15,7 +15,6 @@ static void init_array(TokenArray *arr) {
     arr->size = 0;
     arr->capacity = 0;
 }
-
 static void push_token(TokenArray *arr, Token t) {
     if (arr->size == arr->capacity) {
         int newCap = (arr->capacity == 0) ? 64 : arr->capacity * 2;
@@ -187,9 +186,7 @@ Token *lex_file(const char *filename, int *out_count) {
 
             push_token(&tokens, t);
             continue;
-        }
-
-           
+        }     
         {
             char sym[2] = {c, '\0'};
             Token t;
@@ -200,8 +197,6 @@ Token *lex_file(const char *filename, int *out_count) {
             push_token(&tokens, t);
         }
     }
-
-        
             Token eof;
             eof.type =TOK_EOF;
             eof.lexeme= strdup("EOF");
@@ -213,7 +208,6 @@ Token *lex_file(const char *filename, int *out_count) {
             *out_count= tokens.size;
             return tokens.data;
         }
-        
         void free_tokens(Token *tokens, int count) {
             if (!tokens) return;
             for (int i= 0;i <count;i++)
