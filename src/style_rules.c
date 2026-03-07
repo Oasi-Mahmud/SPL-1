@@ -12,21 +12,30 @@ static int is_type_keyword_local(const char *s) {
 }
 
 static int has_underscore(const char *s) {
-    for (int i = 0; s[i]; i++) if (s[i] == '_') return 1;
+    for (int i = 0; s[i]; i++){
+        if (s[i] == '_')
+            return 1;
+    }
     return 0;
 }
 
 static int is_pascal_case(const char *s) {
-    if (!s || !s[0]) return 0;
-    if (!isupper((unsigned char)s[0])) return 0;
-    if (has_underscore(s)) return 0;
+    if (!s || !s[0])
+        return 0;
+    if (!isupper((unsigned char)s[0]))
+        return 0;
+    if (has_underscore(s))
+        return 0;
     return 1;
 }
 
 static int is_camel_case(const char *s) {
-    if (!s || !s[0]) return 0;
-    if (!islower((unsigned char)s[0])) return 0;
-    if (has_underscore(s)) return 0;
+    if (!s || !s[0]) 
+        return 0;
+    if (!islower((unsigned char)s[0]))
+        return 0;
+    if (has_underscore(s)) 
+        return 0;
     return 1;
 }
 
@@ -36,8 +45,10 @@ static int looks_like_constant(const char *s) {
         char c = s[i];
         if (isalpha((unsigned char)c)) {
             hasAlpha = 1;
-            if (!isupper((unsigned char)c)) return 0;
-        } else if (c == '_' || isdigit((unsigned char)c)) {
+            if (!isupper((unsigned char)c))
+                return 0;
+        } 
+        else if (c == '_' || isdigit((unsigned char)c)) {
             
         } else {
             return 0;
@@ -51,15 +62,18 @@ static int is_control_keyword(const char *s) {
 }
 
 static int skip_parens(Token *t, int n, int i) {
-    if (i >= n) return i;
-    if (!(t[i].type == TOK_SYMBOL && strcmp(t[i].lexeme, "(") == 0)) return i;
+    if (i >= n) 
+        return i;
+    if (!(t[i].type == TOK_SYMBOL && strcmp(t[i].lexeme, "(") == 0)) 
+        return i;
 
     int depth = 0;
     for (; i < n; i++) {
         if (t[i].type == TOK_SYMBOL && strcmp(t[i].lexeme, "(") == 0) depth++;
         else if (t[i].type == TOK_SYMBOL && strcmp(t[i].lexeme, ")") == 0) {
             depth--;
-            if (depth == 0) return i + 1;
+            if (depth == 0)
+                return i + 1;
         }
     }
     return n - 1;
@@ -67,7 +81,8 @@ static int skip_parens(Token *t, int n, int i) {
 
 
 void run_style_checks(Token *t, int n) {
-    if (!t || n <= 0) return;
+    if (!t || n <= 0)
+        return;
 
     printf("\nStyle Checks (Rule-based):\n");
     int warningCount = 0;
@@ -114,7 +129,8 @@ for (int i = 0; i < n - 1; i++) {
 
             const char *v = t[i+1].lexeme;
 
-            if (looks_like_constant(v)) continue;
+            if (looks_like_constant(v))
+                continue;
 
             if (!is_camel_case(v)) {
                 printf("  [STYLE] Variable name should be camelCase: '%s' (line %d)\n",
@@ -131,10 +147,12 @@ for (int i = 0; i < n - 1; i++) {
 
             if (strcmp(t[i].lexeme, "do") != 0) {
                 while (j < n && !(t[j].type == TOK_SYMBOL && strcmp(t[j].lexeme, "(") == 0)) j++;
-                if (j >= n) continue;
+                if (j >= n) 
+                    continue;
 
                 j = skip_parens(t, n, j); 
-                if (j >= n) continue;
+                if (j >= n)
+                    continue;
             }
 
             if (!(t[j].type == TOK_SYMBOL && strcmp(t[j].lexeme, "{") == 0)) {
