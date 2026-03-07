@@ -18,7 +18,8 @@ static void normalize_name(const char *in, char *out, size_t outsz) {
     size_t j = 0;
     for (size_t i = 0; tmp[i] && j + 1 < outsz; i++) {
         char c = tmp[i];
-        if (c == '_' || c == '-' || c == ' ') continue;
+        if (c == '_' || c == '-' || c == ' ') 
+            continue;
         out[j++] = c;
     }
     out[j] = '\0';
@@ -44,19 +45,22 @@ static void extract_object_phrase(const char *original, int prefixLen, char *out
         char c = p[i];
 
         if (c == '_' || c == '-' ) {
-            if (!prevWasSpace && j + 1 < outsz) out[j++] = ' ';
+            if (!prevWasSpace && j + 1 < outsz) 
+                out[j++] = ' ';
             prevWasSpace = 1;
             continue;
         }
 
         if (isupper((unsigned char)c)) {
-            if (!prevWasSpace && j + 1 < outsz) out[j++] = ' ';
+            if (!prevWasSpace && j + 1 < outsz)
+                out[j++] = ' ';
             out[j++] = (char)tolower((unsigned char)c);
             prevWasSpace = 0;
         } else {
          
             if (c == ' ') {
-                if (!prevWasSpace && j + 1 < outsz) out[j++] = ' ';
+                if (!prevWasSpace && j + 1 < outsz) 
+                    out[j++] = ' ';
                 prevWasSpace = 1;
             } else {
                 out[j++] = (char)tolower((unsigned char)c);
@@ -65,13 +69,16 @@ static void extract_object_phrase(const char *original, int prefixLen, char *out
         }
     }
 
-    while (j > 0 && out[j - 1] == ' ') j--;
+    while (j > 0 && out[j - 1] == ' ')
+        j--;
     out[j] = '\0';
 }
 
 static void write_out(char *out, size_t outsz, const char *fmt, const char *obj) {
-    if (obj && obj[0]) snprintf(out, outsz, fmt, obj);
-    else snprintf(out, outsz, "%s", "Performs a programmer-defined operation");
+    if (obj && obj[0])
+        snprintf(out, outsz, fmt, obj);
+    else
+        snprintf(out, outsz, "%s", "Performs a programmer-defined operation");
 }
 
 void method_name_summary(const char *methodName, char *out, size_t outSize) {
