@@ -36,7 +36,8 @@ static int starts_with(const char *s, const char *p) {
 
 static void extract_object_phrase(const char *original, int prefixLen, char *out, size_t outsz) {
     const char *p = original + prefixLen;
-    while (*p == '_' || *p == '-' || *p == ' ') p++;
+    while (*p == '_' || *p == '-' || *p == ' ')
+        p++;
 
     size_t j = 0;
     int prevWasSpace = 1;
@@ -56,13 +57,15 @@ static void extract_object_phrase(const char *original, int prefixLen, char *out
                 out[j++] = ' ';
             out[j++] = (char)tolower((unsigned char)c);
             prevWasSpace = 0;
-        } else {
+        }
+        else {
          
             if (c == ' ') {
                 if (!prevWasSpace && j + 1 < outsz) 
                     out[j++] = ' ';
                 prevWasSpace = 1;
-            } else {
+            }
+            else {
                 out[j++] = (char)tolower((unsigned char)c);
                 prevWasSpace = 0;
             }
@@ -82,7 +85,8 @@ static void write_out(char *out, size_t outsz, const char *fmt, const char *obj)
 }
 
 void method_name_summary(const char *methodName, char *out, size_t outSize) {
-    if (!methodName || !out || outSize == 0) return;
+    if (!methodName || !out || outSize == 0)
+        return;
 
     char norm[256];
     normalize_name(methodName, norm, sizeof(norm));
@@ -95,15 +99,19 @@ void method_name_summary(const char *methodName, char *out, size_t outSize) {
     if (starts_with(norm, "is")) {
         char obj[256];
         extract_object_phrase(methodName, 2, obj, sizeof(obj));
-        if (obj[0]) snprintf(out, outSize, "Checks whether %s", obj);
-        else snprintf(out, outSize, "Checks a condition and returns boolean result");
+        if (obj[0]) 
+            snprintf(out, outSize, "Checks whether %s", obj);
+        else 
+            snprintf(out, outSize, "Checks a condition and returns boolean result");
         return;
     }
     if (starts_with(norm, "has")) {
         char obj[256];
         extract_object_phrase(methodName, 3, obj, sizeof(obj));
-        if (obj[0]) snprintf(out, outSize, "Checks whether it has %s", obj);
-        else snprintf(out, outSize, "Checks existence and returns boolean result");
+        if (obj[0])
+            snprintf(out, outSize, "Checks whether it has %s", obj);
+        else
+            snprintf(out, outSize, "Checks existence and returns boolean result");
         return;
     }
 
@@ -163,7 +171,6 @@ void method_name_summary(const char *methodName, char *out, size_t outSize) {
         snprintf(out, outSize, "Sorts a collection of items");
         return;
     }
-
     if (strstr(norm, "area")) {
         snprintf(out, outSize, "Calculates area of a geometric shape");
         return;
@@ -187,8 +194,6 @@ void method_name_summary(const char *methodName, char *out, size_t outSize) {
 
     snprintf(out, outSize, "Performs a programmer-defined operation");
 }
-
-
 void class_name_summary(const char *className, char *out, size_t outSize) {
     if (!className || !out || outSize == 0) return;
 
