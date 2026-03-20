@@ -1,6 +1,11 @@
 #include <stdio.h>
 #include <string.h>
+#include <windows.h>
 #include "token.h"
+#include "summary.h"
+#include "style_rules.h"
+#include "bug_rules.h"
+
 
 static int is_type_keyword(const char *s) {
     return strcmp(s,"int")==0 || strcmp(s,"double")==0 ||
@@ -9,40 +14,20 @@ static int is_type_keyword(const char *s) {
            strcmp(s,"short")==0;
 }
 
-const char* infer_method_purpose(const char *name) {
-
-    if (strncmp(name,"get",3)==0)
-        return "Returns the value of a variable";
-
-    if (strncmp(name,"set",3)==0)
-        return "Sets or updates the value of a variable";
-
-    if (strncmp(name,"is",2)==0)
-        return "Checks a condition and returns boolean result";
-
-    if (strstr(name,"area") || strstr(name,"Area"))
-        return "Calculates area of a geometric shape";
-
-     if (strstr(name,"distance") || strstr(name,"Distance"))
-        return "Calculates distance between objects or points";
-
-    if (strcmp(name,"toString")==0)
-        return "Returns string representation of the object";
-
-
-    return "Performs a programmer-defined operation";
-}
-
 void analyze(Token *t, int n) {
 
-    int classCount = 0, methodCount = 0;
+int classCount = 0, methodCount = 0;
     int forCount = 0, whileCount = 0, doCount = 0;
     int globalVar = 0, localVar = 0;
     int LOC = 0;
-
     int braceDepth = 0;
     int insideMethod = 0;
 
+    char methodNames[100][64];
+    char classNames[100][64];
+    int methodLines[100];
+    int classLines[100];
+    
     printf("\nDetected Classes:\n");
 
       for (int i = 0; i < n - 1; i++) {
@@ -52,6 +37,10 @@ void analyze(Token *t, int n) {
 
             printf("  Class: %s (line %d)\n",
                    t[i+1].lexeme, t[i].line);
+             if (classCount < 100) {
+                strcpy(classNames[classCount], t[i+1].lexeme);
+                classLines[classCount] = t[i].line;
+            }
             classCount++;
         }
     }
@@ -65,6 +54,10 @@ void analyze(Token *t, int n) {
 
             printf("  Method: %s (line %d)\n",
                    t[i+1].lexeme, t[i].line);
+             if (methodCount < 100) {
+                strcpy(methodNames[methodCount], t[i+1].lexeme);
+                methodLines[methodCount] = t[i].line;
+            }
             methodCount++;
         }
 
@@ -75,6 +68,10 @@ void analyze(Token *t, int n) {
 
             printf("  Method: %s (line %d)\n",
                    t[i+1].lexeme, t[i].line);
+            if (methodCount < 100) {
+                strcpy(methodNames[methodCount], t[i+1].lexeme);
+                methodLines[methodCount] = t[i].line;
+            }
             methodCount++;
         }
     }
