@@ -206,14 +206,13 @@ for (int i = 0; i < n - 1; i++) {
             }
         }
     }
- if (is_keyword(t, i, "for")) {
+ for (int i = 0; i < n - 2; i++) {
+        if (is_keyword(t, i, "if")) {
             int j = find_next_lparen(t, n, i + 1);
             if (j >= n) 
-              continue;
+                continue;
 
-            if (j + 2 < n && is_symbol(t, j, "(") && is_symbol(t, j + 1, ";") && is_symbol(t, j + 2, ";")) {
-                printf("  [BUG-6] Possible infinite loop: for(;;) (line %d)\n", t[i].line);
-                warn++;
-            }
-        }
-    }
+            int end = skip_parens(t, n, j);
+            if (end > n)
+             end = n;
+
