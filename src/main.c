@@ -97,32 +97,19 @@ int classCount = 0, methodCount = 0;
 
      printf("\nDetected Variables:\n");
 
-    for (int i =0; i <n - 1; i++) {
+    int variableCount = 0;
 
-        if (t[i].type ==TOK_SYMBOL) {
-            if (strcmp(t[i].lexeme,"{")==0)
-                 braceDepth++;
-            if (strcmp(t[i].lexeme,"}")==0) {
-                braceDepth--;
-                if (braceDepth < 2) insideMethod = 0;
-            }
-        }
+    for (int i = 0; i < n - 1; i++) {
 
-        if (t[i].type== TOK_KEYWORD && is_type_keyword(t[i].lexeme) &&
-            t[i+1].type ==TOK_IDENTIFIER) {
+    if (t[i].type == TOK_KEYWORD && is_type_keyword(t[i].lexeme) &&
+        t[i+1].type == TOK_IDENTIFIER) {
 
-            if (braceDepth >= 2) {
-                printf(" Local Variable: %s (line %d)\n",
-                       t[i+1].lexeme, t[i].line);
-                      localVar++;
-            } else {
-                printf("  Global Variable: %s (line %d)\n",
-                       t[i+1].lexeme, t[i].line);
-                globalVar++;
-            }
-        }
+        printf("  Variable: %s (line %d)\n",
+               t[i+1].lexeme, t[i].line);
+
+        variableCount++;
     }
-
+}
     int lastLine= -1;                 
     for (int i = 0; i <n; i++) {
         if (t[i].line !=lastLine &&
@@ -132,7 +119,7 @@ int classCount = 0, methodCount = 0;
         }
     }
 
- printf("\nSummary  :\n");
+    printf("\nSummary  :\n");
     printf("  Total Classes        : %d \n", classCount);
     printf(" Total Methods        : %d \n", methodCount);
     printf("  for-loops            : %d\n", forCount);
@@ -141,6 +128,10 @@ int classCount = 0, methodCount = 0;
     printf("  Global Variables    : %d\n", globalVar);
     printf("  Local Variables    : %d\n", localVar);
     printf("  Lines of Code (LOC)   : %d\n", LOC);
+
+    run_style_checks(t, n);
+    run_bug_checks(t, n);
+    
 }
 
 int main(int argc, char **argv) {
