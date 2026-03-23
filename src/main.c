@@ -131,7 +131,42 @@ int classCount = 0, methodCount = 0;
 
     run_style_checks(t, n);
     run_bug_checks(t, n);
-    
+
+    char choice;
+    printf("\nDo you want to see summary? (y/n): ");
+    scanf(" %c", &choice);
+
+    if (choice == 'y' || choice == 'Y') {
+
+        printf("\n1. Method Summary\n");
+        printf("2. Class Summary\n");
+        printf("Select option: ");
+
+        int opt;
+        scanf("%d", &opt);
+
+        if (opt == 1 && methodCount > 0) {
+
+            printf("\nAvailable Methods:\n");
+
+            int printableMethods = (methodCount < 100) ? methodCount : 100;
+
+            for (int i = 0; i < printableMethods; i++)
+                printf("  %d. %s\n", i+1, methodNames[i]);
+
+            int sel;
+            printf("Enter method number: ");
+            scanf("%d", &sel);
+
+            if (sel >= 1 && sel <= printableMethods) {
+                char buffer[256];
+                method_name_summary(methodNames[sel-1], buffer, sizeof(buffer));
+
+                printf("\nMethod Summary:\n");
+                printf("  Name    : %s\n", methodNames[sel-1]);
+                printf("  Line    : %d\n", methodLines[sel-1]);
+                printf("  Purpose : %s\n", buffer);
+            }
 }
 
 int main(int argc, char **argv) {
