@@ -168,8 +168,34 @@ int classCount = 0, methodCount = 0;
                 printf("  Purpose : %s\n", buffer);
             }
 }
+ else if (opt == 2 && classCount > 0) {
 
-int main(int argc, char **argv) {
+            printf("\nAvailable Classes:\n");
+
+            int printableClasses = (classCount < 100) ? classCount : 100;
+
+            for (int i = 0; i < printableClasses; i++)
+                printf("  %d. %s\n", i+1, classNames[i]);
+
+            int sel;
+            printf("Enter class number: ");
+            scanf("%d", &sel);
+
+            if (sel >= 1 && sel <= printableClasses) {
+                char buffer[256];
+                class_name_summary(classNames[sel-1], buffer, sizeof(buffer));
+
+                printf("\nClass Summary:\n");
+                printf("  Name    : %s\n", classNames[sel-1]);
+                printf("  Line    : %d\n", classLines[sel-1]);
+                printf("  Purpose : %s\n", buffer);
+            }
+        }
+    }
+}
+
+
+int main() {
     if (argc < 2) {
         printf("Usage: %s <java_file>\n", argv[0]);
         return 1;
@@ -186,5 +212,6 @@ int main(int argc, char **argv) {
     free_tokens(tokens, count);
     return 0;
 }
+
 
 .
