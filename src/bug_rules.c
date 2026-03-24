@@ -216,3 +216,16 @@ for (int i = 0; i < n - 1; i++) {
             if (end > n)
              end = n;
 
+ for (int k = j; k < end - 2; k++) {
+                if (t[k].type == TOK_IDENTIFIER &&
+                    (is_symbol(t, k + 1, "&") || is_symbol(t, k + 1, "|")) &&
+                    t[k + 2].type == TOK_IDENTIFIER &&
+                    strcmp(t[k].lexeme, t[k + 2].lexeme) == 0) {
+
+                    printf("  [BUG-7] Duplicate condition in if (line %d)\n", t[i].line);
+                    warn++;
+                    break;
+                }
+            }
+        }
+    }
