@@ -196,6 +196,19 @@ int classCount = 0, methodCount = 0;
 
 
 int main() {
+ 
+    char dirPath[260];
+    printf("Enter directory path: ");
+    fgets(dirPath, sizeof(dirPath), stdin);
+
+    size_t L = strlen(dirPath);
+    if (L > 0 && (dirPath[L-1] == '\n' || dirPath[L-1] == '\r')) dirPath[L-1] = '\0';
+    L = strlen(dirPath);
+    if (L > 0 && dirPath[L-1] == '\r') dirPath[L-1] = '\0';
+
+    char pattern[300];
+    snprintf(pattern, sizeof(pattern), "%s\\*.java", dirPath);
+    
     if (argc < 2) {
         printf("Usage: %s <java_file>\n", argv[0]);
         return 1;
