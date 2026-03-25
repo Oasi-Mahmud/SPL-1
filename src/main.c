@@ -209,13 +209,9 @@ int main() {
     char pattern[300];
     snprintf(pattern, sizeof(pattern), "%s\\*.java", dirPath);
     
-    if (argc < 2) {
-        printf("Usage: %s <java_file>\n", argv[0]);
-        return 1;
-    }
 
     int count = 0;
-    Token *tokens = lex_file(argv[1], &count);
+    Token *tokens = lex_file(fullPath, &count);
     if (!tokens) {
         fprintf(stderr, "Tokenization failed\n");
         return 1;
