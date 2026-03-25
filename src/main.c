@@ -208,10 +208,36 @@ int main() {
 
     char pattern[300];
     snprintf(pattern, sizeof(pattern), "%s\\*.java", dirPath);
-    
 
+     WIN32_FIND_DATAA ffd;
+    HANDLE hFind = FindFirstFileA(pattern, &ffd);
+
+    if (hFind == INVALID_HANDLE_VALUE) {
+        printf("No .java files found (or directory invalid).\n");
+        return 1;
+    }
+
+    char files[200][260];
+    int fileCount = 0;
+
+    printf("\nAvailable .java files:\n");
+
+    do {
+        if (!(ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)) {
+            if (fileCount < 200) {
+                strcpy(files[fileCount], ffd.cFileName);
+                printf("  %d. %s\n", fileCount + 1, files[fileCount]);
+                fileCount++;
+            }
+        }
+    }
+    while (FindNextFileA(hFind, &ffd) != 0);
+
+    FindClose(hFind);
+    
     int count = 0;
     Token *tokens = lex_file(fullPath, &count);
+    
     if (!tokens) {
         fprintf(stderr, "Tokenization failed\n");
         return 1;
