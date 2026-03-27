@@ -16,12 +16,12 @@ static int is_type_keyword(const char *s) {
 
 void analyze(Token *t, int n) {
 
-int classCount = 0, methodCount = 0;
-    int forCount = 0, whileCount = 0, doCount = 0;
-    int globalVar = 0, localVar = 0;
-    int LOC = 0;
-    int braceDepth = 0;
-    int insideMethod = 0;
+int classCount=0, methodCount =0;
+    int forCount =0, whileCount= 0, doCount = 0;
+    int globalVar =0, localVar= 0;
+    int LOC =0;
+    int braceDepth= 0;
+    int insideMethod=0;
 
     char methodNames[100][64];
     char classNames[100][64];
@@ -30,15 +30,15 @@ int classCount = 0, methodCount = 0;
     
     printf("\nDetected Classes:\n");
 
-      for (int i = 0; i < n - 1; i++) {
+      for (int i=0;i< n- 1;i++) {
         if (t[i].type == TOK_KEYWORD &&
-            strcmp(t[i].lexeme, "class") == 0 &&
+            strcmp(t[i].lexeme, "class") ==0 &&
             t[i+1].type == TOK_IDENTIFIER) {
 
             printf("  Class: %s (line %d)\n",
-                   t[i+1].lexeme, t[i].line);
+                   t[i+1].lexeme,t[i].line);
              if (classCount < 100) {
-                strcpy(classNames[classCount], t[i+1].lexeme);
+                strcpy(classNames[classCount],t[i+1].lexeme);
                 classLines[classCount] = t[i].line;
             }
             classCount++;
@@ -47,28 +47,28 @@ int classCount = 0, methodCount = 0;
 
     printf("\nDetected Methods:\n");
 
-    for (int i = 0; i < n - 2; i++) {
-        if ((t[i].type == TOK_KEYWORD && is_type_keyword(t[i].lexeme)) &&
-            t[i+1].type == TOK_IDENTIFIER &&
-            strcmp(t[i+2].lexeme, "(") == 0) {
+    for (int i=0; i<n-2;i++) {
+        if ((t[i].type==TOK_KEYWORD && is_type_keyword(t[i].lexeme)) &&
+            t[i+1].type ==TOK_IDENTIFIER &&
+            strcmp(t[i+2].lexeme, "(")==0) {
 
             printf("  Method: %s (line %d)\n",
-                   t[i+1].lexeme, t[i].line);
-             if (methodCount < 100) {
+                   t[i+1].lexeme,t[i].line);
+             if (methodCount<100) {
                 strcpy(methodNames[methodCount], t[i+1].lexeme);
-                methodLines[methodCount] = t[i].line;
+                methodLines[methodCount]=t[i].line;
             }
             methodCount++;
         }
 
         if (t[i].type == TOK_KEYWORD &&
             strcmp(t[i].lexeme,"void")==0 &&
-            t[i+1].type == TOK_IDENTIFIER &&
+            t[i+1].type ==TOK_IDENTIFIER &&
             strcmp(t[i+2].lexeme,"(")==0) {
 
             printf("  Method: %s (line %d)\n",
                    t[i+1].lexeme, t[i].line);
-            if (methodCount < 100) {
+            if (methodCount<100) {
                 strcpy(methodNames[methodCount], t[i+1].lexeme);
                 methodLines[methodCount] = t[i].line;
             }
@@ -235,7 +235,24 @@ int main() {
 
     FindClose(hFind);
     
-    int count = 0;
+     if (fileCount == 0) {
+        printf("No .java files found.\n");
+        return 1;
+    }
+    
+    int choice = 0;
+    printf("\nSelect file number: ");
+    scanf("%d", &choice);
+
+    if (choice < 1 || choice > fileCount) {
+        printf("Invalid selection.\n");
+        return 1;
+    }
+
+    char fullPath[520];
+    snprintf(fullPath, sizeof(fullPath), "%s\\%s", dirPath, files[choice - 1]);
+
+    int count=0;
     Token *tokens = lex_file(fullPath, &count);
     
     if (!tokens) {
@@ -248,5 +265,3 @@ int main() {
     return 0;
 }
 
-
-.
