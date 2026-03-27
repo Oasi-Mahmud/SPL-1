@@ -229,3 +229,6 @@ for (int i = 0; i < n - 1; i++) {
             }
         }
     }
+ if (warn == 0) printf("  No obvious bug patterns found.\n");
+    else printf("  Total bug warnings: %d\n", warn);
+}
