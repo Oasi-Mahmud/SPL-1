@@ -201,4 +201,11 @@ for (int i = 0; i < n - 1; i++) {
                 warningCount++;
             }
         }
+    }  
+    if (warningCount == 0) {
+            printf("  No style issues found.\n");
+        } 
+    else {
+            printf("  Total style warnings: %d\n", warningCount);
+        }
     }
