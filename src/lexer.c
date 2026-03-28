@@ -11,54 +11,54 @@ typedef struct {
 } TokenArray;
 
 static void init_array(TokenArray *arr) {
-    arr->data = NULL;
-    arr->size = 0;
-    arr->capacity = 0;
+    arr->data=NULL;
+    arr->size=0;
+    arr->capacity=0;
 }
 static void push_token(TokenArray *arr, Token t) {
-    if (arr->size == arr->capacity) {
-        int newCap = (arr->capacity == 0) ? 64 : arr->capacity * 2;
-        Token *tmp = realloc(arr->data, newCap * sizeof(Token));
-        if (!tmp) {
+    if (arr->size==arr->capacity) {
+        int newCap =(arr->capacity == 0) ? 64 : arr->capacity * 2;
+        Token *tmp =realloc(arr->data,newCap * sizeof(Token));
+        if (!tmp){
             fprintf(stderr, "Memory allocation failed\n");
             exit(1);
         }
-        arr->data = tmp;
+        arr->data=tmp;
         arr->capacity=newCap;
     }
-    arr->data[arr->size++] = t;
+    arr->data[arr->size++]=t;
 }
 
 static char *copy_range(const char *src, int len) {
-    char *s = malloc(len + 1);
-    if (!s) {
+    char *s=malloc(len +1);
+    if (!s){
         fprintf(stderr, "Memory allocation failed\n");
         exit(1);
     }
-    strncpy(s, src, len);
-    s[len] = '\0';
+    strncpy(s,src,len);
+    s[len] ='\0';
     return s;
 }
 
-static const char *keywords[] = {
-    "class","public","private","protected","static",
-    "void","int","double","float","boolean","char",
-    "long","short","return","if","else","for","while",
-    "do","switch","case","break","continue","new",
-    "try","catch","finally","throws","extends","implements"
+static const char *keywords[] ={
+    "class", "public","private","protected","static",
+    "void", "int","double", "float","boolean","char",
+     "long","short","return","if","else","for","while",
+     "do","switch", "case", "break","continue","new",
+    "try" ,"catch", "finally","throws","extends","implements"
 };
 
 static int is_keyword(const char *s) {
-    int n = sizeof(keywords) / sizeof(keywords[0]);
-    for (int i = 0; i < n; i++) {
-        if (strcmp(s, keywords[i]) == 0)
+    int n = sizeof(keywords) /sizeof(keywords[0]);
+    for (int i = 0; i < n; i++){
+        if (strcmp(s,keywords[i])== 0)
             return 1;
     }
     return 0;
 }
 
 Token *lex_file(const char *filename, int *out_count) {
-    FILE *fp = fopen(filename, "r");
+    FILE *fp =fopen(filename, "r");
     
     if (!fp) {
         fprintf(stderr, "Cannot open file %s\n", filename);
@@ -69,120 +69,127 @@ Token *lex_file(const char *filename, int *out_count) {
     init_array(&tokens);
 
     int c;
-    int line = 1, col = 0;
+    int line=1,col=0;
 
-    while ((c = fgetc(fp)) != EOF) {
+    while ((c=fgetc(fp)) != EOF) {
         col++;
-        if (c == ' ' || c == '\t' || c == '\r')
+        if (c==' '||c =='\t'||c =='\r')
             continue;
 
-            if (c == '\n') {
+            if (c=='\n') {
             line++;
-            col = 0;
+            col=0;
             continue;
         }
         
-         if (c == '/') {
-            int next = fgetc(fp);
-         if (next == '/') {
-                while ((c = fgetc(fp)) != EOF && c != '\n');
+         if(c=='/'){
+            int next=fgetc(fp);
+         if (next=='/') {
+                while((c = fgetc(fp)) != EOF && c != '\n');
                 line++;
-                col = 0;
+                col=0;
                 continue;
             }
 
-            if (next == '*') {
-                int prev = 0;
-                while ((c = fgetc(fp)) != EOF) {
-                    if (c == '\n') {
+            if (next=='*'){
+                int prev=0;
+                while ((c=fgetc(fp))!= EOF){
+                    if (c =='\n'){
                         line++;
-                        col = 0;
+                        col= 0;
                     }
                     
-                    if (prev == '*' && c == '/')
+                    if(prev=='*'&& c == '/'){
                         break;
-                    prev = c;
+                    }
+                    prev =c;
                 }
                 
                 continue;
             }
 
-            ungetc(next, fp);
+            ungetc(next,fp);
         }
         
-          if (isalpha(c) || c == '_' || c == '$') {
+          if(isalpha(c) || c == '_' || c == '$'){
             char buf[256];
-            int len = 0;
+            int len=0;
 
-            buf[len++] = c;
+            buf[len++]=c;
 
             int p;
-            while ((p = fgetc(fp)) != EOF &&
-                   (isalnum(p) || p == '_' || p == '$')) {
-                if (len < 255)
-                    buf[len++] = p;
+            while ((p =fgetc(fp))!= EOF &&
+                   (isalnum(p) || p =='_' ||p == '$')) {
+                if(len<255){
+                    buf[len++]=p;
+                }
                 col++;
             }
               
-            buf[len] = '\0';
-            if (p != EOF) ungetc(p, fp);
+            buf[len]='\0';
+            if (p !=EOF) 
+                ungetc(p,fp);
 
             Token t;
-            t.type = is_keyword(buf) ? TOK_KEYWORD : TOK_IDENTIFIER;
-            t.lexeme = strdup(buf);
-            t.line = line;
-            t.column = col - len + 1;
+            t.type =is_keyword(buf) ? TOK_KEYWORD : TOK_IDENTIFIER;
+            t.lexeme=strdup(buf);
+            t.line=line;
+            t.column=col-len+1;
 
-            push_token(&tokens, t);
+            push_token(&tokens,t);
             continue;
         }
         
-          if (isdigit(c)) {
+          if(isdigit(c)){
             char buf[128];
-            int len = 0;
+            int len =0;
 
-            buf[len++] = c;
+            buf[len++]=c;
             int p;
-            while ((p = fgetc(fp)) != EOF && isdigit(p)) {
-                if (len < 127)
-                    buf[len++] = p;
+            while((p=fgetc(fp))!= EOF && isdigit(p)) {
+                if(len<127) {
+                    buf[len++]=p;
+                }
                 col++;
             }
               
-            buf[len] = '\0';
-            if (p != EOF) ungetc(p, fp);
+            buf[len]='\0';
+            if(p !=EOF){
+                ungetc(p,fp);
+            }
 
             Token t;
-            t.type = TOK_NUMBER;
-            t.lexeme = strdup(buf);
-            t.line = line;
-            t.column = col - len + 1;
+            t.type=TOK_NUMBER;
+            t.lexeme=strdup(buf);
+            t.line=line;
+            t.column=col-len+1;
 
             push_token(&tokens, t);
             continue;
         }
 
        
-        if (c == '"') {
+        if (c=='"') {
             char buf[512];
-            int len =0;
+            int len=0;
             int p;
 
-            while ((p = fgetc(fp)) != EOF && p != '"') {
-                if (p == '\n') {
+            while ((p =fgetc(fp))!= EOF && p != '"'){
+                if (p=='\n'){
                     line++;
                     col =0;
                 }
-                if (len < 511)
+                if (len<511){
                     buf[len++] =p;
+                }
             }
-            buf[len] = '\0';
+            buf[len]='\0';
 
             Token t;
             t.type =TOK_STRING;
-            t.lexeme= strdup(buf);
-            t.line= line;
-            t.column =col;
+            t.lexeme=strdup(buf);
+            t.line=line;
+            t.column=col;
 
             push_token(&tokens, t);
             continue;
@@ -190,7 +197,7 @@ Token *lex_file(const char *filename, int *out_count) {
         {
             char sym[2] = {c, '\0'};
             Token t;
-            t.type =TOK_SYMBOL;
+            t.type=TOK_SYMBOL;
             t.lexeme= strdup(sym);
             t.line =line;
             t.column=col;
@@ -199,18 +206,21 @@ Token *lex_file(const char *filename, int *out_count) {
     }
             Token eof;
             eof.type =TOK_EOF;
-            eof.lexeme= strdup("EOF");
+            eof.lexeme=strdup("EOF");
             eof.line =line;
             eof.column =col;
             push_token(&tokens, eof);
         
             fclose(fp);
-            *out_count= tokens.size;
+            *out_count=tokens.size;
             return tokens.data;
         }
         void free_tokens(Token *tokens, int count) {
-            if (!tokens) return;
-            for (int i= 0;i <count;i++)
+            if (!tokens){
+                return;
+            }
+            for (int i= 0;i <count;i++){
                 free(tokens[i].lexeme);
+            }
             free(tokens);
         }
