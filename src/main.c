@@ -6,7 +6,6 @@
 #include "style_rules.h"
 #include "bug_rules.h"
 
-
 static int is_type_keyword(const char *s) {
     return strcmp(s,"int")==0 || strcmp(s,"double")==0 ||
            strcmp(s,"float")==0 || strcmp(s,"char")==0 ||
@@ -17,29 +16,85 @@ static int is_type_keyword(const char *s) {
 void analyze(Token *t, int n) {
 
 int classCount=0,methodCount =0;
-    int forCount =0, hileCount= 0, doCount = 0;
-    int globalVar =0,localVar= 0;
+    int forCount =0, hileCount=0, doCount = 0;
+    int globalVar =0,localVar=0;
     int LOC=0;
     int braceDepth=0;
     int insideMethod=0;
 
     char methodNames[100][64];
     char classNames[100][64];
+    char classParent[100][64];   
+    char classInterface[100][64];
+    int isAbstractClass[100]; 
+    int isInterfaceClass[100]; 
     int methodLines[100];
     int classLines[100];
-    
+
+    printf("\nDetected Interfaces:\n");
+
+    for(int i =0;i<n-1;i++){
+        if(t[i].type ==TOK_KEYWORD &&
+             strcmp(t[i].lexeme, "interface") ==0 &&
+            t[i+1].type==TOK_IDENTIFIER) {
+
+            printf("  Interface: %s (line %d)\n",
+                t[i+1].lexeme, t[i].line);
+        }
+    }
+
     printf("\nDetected Classes:\n");
 
-      for (int i=0;i< n- 1;i++) {
+      for (int i=0;i< n-1;i++) {
         if (t[i].type ==TOK_KEYWORD &&
             strcmp(t[i].lexeme,"class") ==0 &&
             t[i+1].type ==TOK_IDENTIFIER) {
+                int abstractFlag=0;
+                    if (i>0 && t[i-1].type==TOK_KEYWORD &&
+                         strcmp(t[i-1].lexeme, "abstract") ==0){
+                        abstractFlag=1;
+                    }
+                    char parentName[64]="None";
+                    char interfaceName[64]="None";
+    
+                    for(int j=i+2;j< n-1;j++){
+                        if (t[j].type ==TOK_KEYWORD &&
+                            strcmp(t[j].lexeme, "extends")==0 &&
+                            t[j+1].type==TOK_IDENTIFIER) {
+    
+                            strcpy(parentName,t[j+1].lexeme);
+                            break;
+                        }
+                        if (t[j].type==TOK_KEYWORD &&
+                            strcmp(t[j].lexeme, "implements") == 0 &&
+                            t[j+1].type== TOK_IDENTIFIER) {
+    
+                            strcpy(interfaceName, t[j+1].lexeme);
+                        }
+    
+                        if (t[j].type ==TOK_SYMBOL && strcmp(t[j].lexeme, "{") == 0) {
+                            break;
+                    }
+                }
+
 
             printf("  Class: %s (line %d)\n",
                    t[i+1].lexeme,t[i].line);
+                    if(abstractFlag){
+                        printf("    -> This is an ABSTRACT class\n");
+                    }
+                    if (strcmp(parentName, "None") !=0) {
+                        printf("    -> Inherits from: %s\n", parentName);
+                    }
+                    if (strcmp(interfaceName, "None") !=0) {
+                        printf("    -> Implements: %s\n", interfaceName);
+                    }
              if(classCount<100){
                 strcpy(classNames[classCount],t[i+1].lexeme);
                 classLines[classCount] = t[i].line;
+                isAbstractClass[classCount] = abstractFlag;
+                strcpy(classParent[classCount], parentName);
+                strcpy(classInterface[classCount], interfaceName);
             }
             classCount++;
         }
@@ -81,7 +136,7 @@ int classCount=0,methodCount =0;
     for(int i=0;i< n;i++){
         if(t[i].type ==TOK_KEYWORD) {
             if(strcmp(t[i].lexeme,"for")==0){
-                printf("  for-loop (line %d)\n", t[i].line);
+                printf("for-loop (line %d)\n", t[i].line);
                 forCount++;
             }
             if(strcmp(t[i].lexeme,"while")==0){
@@ -99,7 +154,7 @@ int classCount=0,methodCount =0;
 
     int variableCount=0;
 
-    for(int i= 0; i<n -1;i++){
+    for(int i=0;i<n-1;i++){
 
     if(t[i].type ==TOK_KEYWORD && is_type_keyword(t[i].lexeme) &&
         t[i+1].type== TOK_IDENTIFIER){
@@ -111,7 +166,7 @@ int classCount=0,methodCount =0;
     }
 }
     int lastLine=-1;                 
-    for (int i = 0; i <n; i++) {
+    for (int i=0;i<n;i++) {
         if (t[i].line!=lastLine &&
             t[i].type!=TOK_EOF) {
             LOC++;
@@ -143,7 +198,7 @@ int classCount=0,methodCount =0;
         printf("Select option: ");
 
         int opt;
-        scanf("%d", &opt);
+        scanf("%d",&opt);
 
         if (opt == 1 && methodCount>0) {
 
@@ -158,7 +213,7 @@ int classCount=0,methodCount =0;
             printf("Enter method number: ");
             scanf("%d", &sel);
 
-            if(sel >= 1&& sel<=printableMethods){
+            if(sel >=1&& sel<=printableMethods){
                 char buffer[256];
                 method_name_summary(methodNames[sel-1], buffer, sizeof(buffer));
 
@@ -168,7 +223,7 @@ int classCount=0,methodCount =0;
                 printf("  Purpose : %s\n", buffer);
             }
 }
- else if(opt==2&&classCount > 0){
+ else if(opt==2&&classCount>0){
 
             printf("\nAvailable Classes:\n");
 
@@ -260,7 +315,7 @@ int main(){
         return 1;
     }
 
-    analyze(tokens, count);
+    analyze(tokens,count);
     free_tokens(tokens, count);
     return 0;
 }
