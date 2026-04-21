@@ -53,7 +53,16 @@ int classCount=0,methodCount =0;
                     if (i>0 && t[i-1].type==TOK_KEYWORD &&
                          strcmp(t[i-1].lexeme, "abstract") ==0){
                         abstractFlag=1;
+                        break;
                     }
+                 if(t[k].type ==TOK_SYMBOL &&
+                        (strcmp(t[k].lexeme,";")==0 ||
+                        strcmp(t[k].lexeme,"{") ==0 ||
+                        strcmp(t[k].lexeme,"}")==0)){
+                        break;
+                     }
+                    }    
+                 
                     char parentName[64]="None";
                     char interfaceName[64]="None";
     
@@ -63,23 +72,20 @@ int classCount=0,methodCount =0;
                             t[j+1].type==TOK_IDENTIFIER) {
     
                             strcpy(parentName,t[j+1].lexeme);
-                            break;
                         }
                         if (t[j].type==TOK_KEYWORD &&
-                            strcmp(t[j].lexeme, "implements") == 0 &&
-                            t[j+1].type== TOK_IDENTIFIER) {
+                            strcmp(t[j].lexeme,"implements")==0 &&
+                            t[j+1].type==TOK_IDENTIFIER){
     
-                            strcpy(interfaceName, t[j+1].lexeme);
+                            strcpy(interfaceName,t[j+1].lexeme);
                         }
-    
-                        if (t[j].type ==TOK_SYMBOL && strcmp(t[j].lexeme, "{") == 0) {
+                        if(t[j].type ==TOK_SYMBOL && strcmp(t[j].lexeme, "{")==0){
                             break;
                     }
                 }
 
 
-            printf("  Class: %s (line %d)\n",
-                   t[i+1].lexeme,t[i].line);
+            printf("  Class: %s (line %d)\n", t[i+1].lexeme,t[i].line);
                     if(abstractFlag){
                         printf("    -> This is an ABSTRACT class\n");
                     }
@@ -89,9 +95,11 @@ int classCount=0,methodCount =0;
                     if (strcmp(interfaceName, "None") !=0) {
                         printf("    -> Implements: %s\n", interfaceName);
                     }
+          
              if(classCount<100){
                 strcpy(classNames[classCount],t[i+1].lexeme);
                 classLines[classCount] = t[i].line;
+                 
                 isAbstractClass[classCount] = abstractFlag;
                 strcpy(classParent[classCount], parentName);
                 strcpy(classInterface[classCount], interfaceName);
@@ -121,8 +129,7 @@ int classCount=0,methodCount =0;
             t[i+1].type ==TOK_IDENTIFIER &&
             strcmp(t[i+2].lexeme,"(")==0){
 
-            printf("  Method: %s (line %d)\n",
-                   t[i+1].lexeme, t[i].line);
+            printf("  Method: %s (line %d)\n",t[i+1].lexeme, t[i].line);
             if(methodCount<100) {
                 strcpy(methodNames[methodCount], t[i+1].lexeme);
                 methodLines[methodCount] = t[i].line;
@@ -159,9 +166,7 @@ int classCount=0,methodCount =0;
     if(t[i].type ==TOK_KEYWORD && is_type_keyword(t[i].lexeme) &&
         t[i+1].type== TOK_IDENTIFIER){
 
-        printf("  Variable: %s (line %d)\n",
-               t[i+1].lexeme, t[i].line);
-
+        printf("  Variable: %s (line %d)\n",t[i+1].lexeme, t[i].line);
         variableCount++;
     }
 }
@@ -204,7 +209,7 @@ int classCount=0,methodCount =0;
 
             printf("\nAvailable Methods:\n");
 
-            int printableMethods = (methodCount < 100) ? methodCount : 100;
+            int printableMethods=(methodCount < 100)? methodCount : 100;
 
             for (int i = 0; i<printableMethods;i++)
                 printf("  %d. %s\n",i+1,methodNames[i]);
@@ -229,7 +234,7 @@ int classCount=0,methodCount =0;
 
             int printableClasses=(classCount < 100) ? classCount : 100;
 
-            for (int i=0; i<printableClasses;i++){
+            for(int i=0;i<printableClasses;i++){
                 printf("  %d. %s\n", i+1, classNames[i]);
             }
             int sel;
@@ -257,9 +262,13 @@ int main(){
     fgets(dirPath, sizeof(dirPath),stdin);
 
     size_t L =strlen(dirPath);
-    if (L>0&&(dirPath[L-1]=='\n' || dirPath[L-1] == '\r')) dirPath[L-1] = '\0';
-    L = strlen(dirPath);
-    if (L >0 && dirPath[L-1] ='\r') dirPath[L-1] = '\0';
+    if (L>0&&(dirPath[L-1]=='\n' || dirPath[L-1] == '\r')){ 
+        dirPath[L-1] = '\0';
+        L = strlen(dirPath);
+    }
+    if(L>0 && dirPath[L-1] ='\r'){
+        dirPath[L-1] ='\0';
+    }
 
     char pattern[300];
     snprintf(pattern, sizeof(pattern), "%s\\*.java", dirPath);
